@@ -1,6 +1,7 @@
 #include <vector>
 #include <iostream>
 #include <string>
+#include <cassert>
 
 using namespace std;
 
@@ -19,6 +20,10 @@ public:
   Matrix(int nrows, int ncols);
   void set(int row, int col, float value);
   void print(ostream &s);
+
+  // Statics
+  static void trans(const Matrix &A, Matrix &At);
+  static void mul(const Matrix &A, const Matrix &B, Matrix &C);
 };
 
 class Vector {
@@ -31,6 +36,7 @@ public:
   Vector(int size);
   void set(int index, float value);
   void print(ostream &s);
+
 };
 
 
@@ -59,15 +65,44 @@ void Matrix::print(ostream &s){
   s << endl;
 }
 
+void Matrix::trans(const Matrix &A, Matrix &At) {
+  assert(A.nrows == At.ncols);
+  assert(A.ncols == At.nrows);
+
+  for (int row=0; row<A.nrows; row++) {
+    for (int col=0; col<A.ncols; col++) {
+      At.m[col][row]=A.m[row][col];
+    }
+  }
+}
+
+void Matrix::mul(const Matrix &A, const Matrix &B, Matrix &C) {
+  assert(A.ncols == B.nrows);
+  assert(C.nrows == A.nrows);
+  assert(C.ncols == B.ncols);
+  // i=row, j=col
+  for (int row=0; row<C.nrows; row++) {
+    for (int col=0; col<C.ncols; col++) {
+      float s = 0.0;
+      for (int r=0; r<A.ncols ;r++) {
+        s += A.m[row][r]*B.m[r][col];
+      }
+      C.m[row][col]=s;
+    }
+  }
+}
+
 // Vector
 
 Vector::Vector(int size) {
   this->size = size;
   v = vector_t(size);
 }
+
 void Vector::set(int index, float value) {
   v[index] = value;
 }
+
 void Vector::print(ostream &s) {
   s << "Вектор [" << size << "]: " ;
   for (int i=0; i<size; i++) {
@@ -85,11 +120,33 @@ void Vector::print(ostream &s) {
 
 int main (int __argc, char **__argv) {
   std::vector<std::string> args(__argv, __argv+__argc);
+  int m = 3, n = 2;
+  int ni= m;
 
-  Matrix B(2,3); // 2 rows, 3 columns
-  B.set(0,0,1);
-  B.set(1,1,2);
-  B.set(1,2,3);
+  Matrix A(n, ni);
+  // a1
+  A.set(0,0,1);
+  A.set(1,0,1);
+  // a2
+  A.set(0,1,4);
+  A.set(1,1,1);
+  // a3
+  A.set(0,2,1);
+  A.set(1,2,4);
+
+  cout<<"Test A:";
+  A.print(cout);
+
+  Matrix At(ni, n);
+
+  Matrix::trans(A, At);
+  cout<<"Test At:";
+  At.print(cout);
+
+  Matrix B(2,2); // 2 rows, 3 columns
+
+  Matrix::mul(A, At, B);
+
   Vector C(2);
   C.set(0,1);
   C.set(1,2);
