@@ -27,6 +27,42 @@ public:
   void print(ostream &s);
 };
 
+
+// ------------ Implementations ----------------------
+
+
+Matrix::Matrix(int nrows, int ncols) {
+
+}
+void Matrix::set(int row, int col, float value) {
+
+}
+
+void Matrix::print(ostream &s){
+  s << "Выводим Матрицу" << endl;
+}
+
+
+
+
+
+Vector::Vector(int size) {
+
+}
+void Vector::set(int index, float value) {
+
+}
+void Vector::print(ostream &s) {
+  s << "Выводим Вектор"  << endl;
+}
+
+
+
+// ------------ End of Implementations --------------
+
+
+
+
 int main (int __argc, char **__argv) {
   std::vector<std::string> args(__argv, __argv+__argc);
 
